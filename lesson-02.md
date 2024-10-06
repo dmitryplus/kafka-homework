@@ -88,3 +88,36 @@ mkdir /tmp/kafka-logs
 Проверям наличие процесса
 
 ![](2024-10-06_19-29.png)
+
+
+### Работа с топиками
+
+Создаем топик test
+
+```shell
+usr/local/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --create --replication-factor 1 --partitions 1 --topic test
+```
+
+Проверяем наличие топика
+
+```shell
+/usr/local/kafka/bin/kafka-topics.sh --bootstrap-server localhost:9092 --describe --topic test
+```
+
+![](2024-10-06_20-36.png)
+
+Создаем 4 сообщения
+
+```shell
+/usr/local/kafka/bin/kafka-console-producer.sh --bootstrap-server localhost:9092 --topic test
+```
+
+![](2024-10-06_20-38.png)
+
+Получаем сообщения из топика test в порядке "с начала"
+
+```shell
+/usr/local/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic test --from-beginning
+```
+
+![](2024-10-06_20-39.png)
