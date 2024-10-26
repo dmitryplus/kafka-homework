@@ -69,3 +69,30 @@ services:
 Пересобираем контейнер и запускаем - авто форматирование папки логов не запускается
 
 ![2024-10-26_18-12.png](2024-10-26_18-12.png)
+
+Добавим контейнер с ролью брокер на порт 29092
+
+```yml
+  kafka2:
+    image: apache/kafka:latest
+    container_name: kafka2
+    ports:
+      - "29092:29092"
+    environment:
+      KAFKA_NODE_ID: 2
+      KAFKA_PROCESS_ROLES: 'broker'
+      KAFKA_LISTENERS: 'PLAINTEXT://:9092,PLAINTEXT_HOST://:29092'
+      KAFKA_ADVERTISED_LISTENERS: 'PLAINTEXT://broker1:9092,PLAINTEXT_HOST://localhost:29092'
+      KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9093'
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      CLUSTER_ID: 'V0A02O_1RnilY2a9PtVi8Q'
+    depends_on:
+      - kafka1
+    volumes:
+      - ./kafka2-logs:/opt/kafka/logs
+ 
+ ```
+![2024-10-26_18-37.png](2024-10-26_18-37.png)

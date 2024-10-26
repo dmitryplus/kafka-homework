@@ -1,3 +1,4 @@
 /.idea/
 /kafka1-logs/
 /kafka1-kraft-combined-logs/
+/kafka2-logs/
