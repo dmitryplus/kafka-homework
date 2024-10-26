@@ -2,12 +2,12 @@
 
 Домашнее задание к уроку 7
 
-Создаем 1 экземпляр кафки в ролях брокер/контроллер, порт 19092
+Создаем 1 экземпляр кафки c kraft в ролях брокер/контроллер, порт 19092
 
 пример docker-compose
 ```yml
 services:
-  kafka:
+  kafka1:
     image: apache/kafka:latest
     container_name: kafka1
     hostname: kafka1
@@ -36,3 +36,15 @@ services:
 `/usr/local/kafka/bin/kafka-topics.sh --bootstrap-server localhost:19092 --describe`
 
 ![2024-10-26_13-33.png](2024-10-26_13-33.png)
+
+Генерируем uuid кластера
+
+`./kafka-storage.sh random-uuid`
+
+копируем результат и добавлям в параметры строку `CLUSTER_ID: 'V0A02O_1RnilY2a9PtVi8Q'`
+
+пересобираем контейнер и проверяем id кластера
+
+`./kafka-cluster.sh cluster-id --bootstrap-server localhost:19092`
+
+![2024-10-26_13-59.png](2024-10-26_13-59.png)
