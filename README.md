@@ -24,3 +24,15 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: 'PLAINTEXT'
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
 ```
+
+Запускаем докер
+
+![2024-10-26_13-30.png](2024-10-26_13-30.png)
+
+Пробуем создать и прочитать топик test1
+
+`/usr/local/kafka/bin/kafka-topics.sh --bootstrap-server localhost:19092 --create --replication-factor 1 --partitions 1 --topic test1`
+
+`/usr/local/kafka/bin/kafka-topics.sh --bootstrap-server localhost:19092 --describe`
+
+![2024-10-26_13-33.png](2024-10-26_13-33.png)
