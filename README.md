@@ -48,3 +48,24 @@ services:
 `./kafka-cluster.sh cluster-id --bootstrap-server localhost:19092`
 
 ![2024-10-26_13-59.png](2024-10-26_13-59.png)
+
+
+Подключаем внешние папки для логов 
+
+```yml
+    volumes:
+      - ./kafka1-logs:/opt/kafka/logs
+      - ./kafka1-kraft-combined-logs:/tmp/kraft-combined-logs
+```
+
+Папку `kafka1-kraft-combined-logs' форматируем с указанием CLUSTER_ID (конфиг берем локальный, меняем путь к папке логов на локальный)
+
+`./kafka-storage.sh format --ignore-formatted -t V0A02O_1RnilY2a9PtVi8Q -c /usr/local/kafka/config/kraft/server.properties`
+
+![2024-10-26_18-03.png](2024-10-26_18-03.png)
+
+В docker-compose добавляем ID нужного кластера `CLUSTER_ID: 'V0A02O_1RnilY2a9PtVi8Q'`
+
+Пересобираем контейнер и запускаем - авто форматирование папки логов не запускается
+
+![2024-10-26_18-12.png](2024-10-26_18-12.png)
