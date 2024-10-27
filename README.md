@@ -141,6 +141,17 @@ sasl.mechanism=PLAIN
 ![2024-10-27_14-02.png](2024-10-27_14-02.png)
 
 
+Создаем файлы авторизации клиентов Alice, Bob, client
+
+```config
+sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required \
+	username="Alice" \
+	password="Alice-secret";
+security.protocol=SASL_PLAINTEXT
+sasl.mechanism=PLAIN
+```
+
+
 Выдаем пользователю Alice право на чтение из топика test1
 
 `/usr/local/kafka/bin/kafka-acls.sh --bootstrap-server localhost:19092 --add --allow-principal User:Alice --operation Read --topic test1 --command-config /home/dmitry/Otus/dz/admin.properties
