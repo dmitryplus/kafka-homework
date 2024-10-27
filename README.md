@@ -162,3 +162,52 @@ sasl.mechanism=PLAIN
 `/usr/local/kafka/bin/kafka-acls.sh --bootstrap-server localhost:19092 --add --allow-principal User:Bob --operation Write --topic test1 --command-config /home/dmitry/Otus/dz/admin.properties`
 
 ![2024-10-27_14-16.png](2024-10-27_14-16.png)
+
+
+Пробуем просмотреть список топиков разными пользователями
+
+```shell
+
+/usr/local/kafka/bin/kafka-topics.sh --list --bootstrap-server localhost:19092 --command-config /home/dmitry/Otus/dz/client-client.properties
+/usr/local/kafka/bin/kafka-topics.sh --list --bootstrap-server localhost:19092 --command-config /home/dmitry/Otus/dz/alice-client.properties
+/usr/local/kafka/bin/kafka-topics.sh --list --bootstrap-server localhost:19092 --command-config /home/dmitry/Otus/dz/bob-client.properties
+
+
+```
+
+Топик test1 виден у admin, Bob и Alice. Для пользователя client  топика test1 нет
+
+![2024-10-27_14-27.png](2024-10-27_14-27.png)
+
+Пробуем записать сообщение в топик от разных пользователей
+
+```shell
+/usr/local/kafka/bin/kafka-console-producer.sh --bootstrap-server localhost:19092 --topic test --producer.config /home/dmitry/Otus/dz/client-client.properties
+/usr/local/kafka/bin/kafka-console-producer.sh --bootstrap-server localhost:19092 --topic test --producer.config /home/dmitry/Otus/dz/alice-client.properties
+/usr/local/kafka/bin/kafka-console-producer.sh --bootstrap-server localhost:19092 --topic test --producer.config /home/dmitry/Otus/dz/bob-client.properties
+/usr/local/kafka/bin/kafka-console-producer.sh --bootstrap-server localhost:19092 --topic test --producer.config /home/dmitry/Otus/dz/admin.properties
+
+```
+
+![2024-10-27_14-38.png](2024-10-27_14-38.png)
+
+Пробуем прочитать сообщения
+
+```shell
+/usr/local/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:19092 --topic test1 --consumer.config /home/dmitry/Otus/dz/client-client.properties -from-beginning
+/usr/local/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:19092 --topic test1 --consumer.config /home/dmitry/Otus/dz/alice-client.properties -from-beginning
+/usr/local/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:19092 --topic test1 --consumer.config /home/dmitry/Otus/dz/bob-client.properties -from-beginning
+/usr/local/kafka/bin/kafka-console-consumer.sh --bootstrap-server localhost:19092 --topic test1 --consumer.config /home/dmitry/Otus/dz/admin.properties -from-beginning
+
+```
+
+Клиентам Bob и client выдается сообщение о запрете доступа
+
+![2024-10-27_14-45.png](2024-10-27_14-45.png)
+
+в логах ошибка аторизации
+```shell
+[2024-10-27 11:41:11,908] INFO Principal = User:client is Denied operation = DESCRIBE from host = 172.26.0.1 on resource = Topic:LITERAL:test1 for request = Metadata with resourceRefCount = 1 based on rule DefaultDeny (kafka.authorizer.logger)
+[2024-10-27 11:42:14,165] INFO Principal = User:Bob is Denied operation = READ from host = 172.26.0.1 on resource = Topic:LITERAL:test1 for request = Fetch with resourceRefCount = 1 based on rule DefaultDeny (kafka.authorizer.logger)
+
+```
