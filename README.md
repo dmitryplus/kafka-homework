@@ -96,3 +96,46 @@ services:
  
  ```
 ![2024-10-26_18-37.png](2024-10-26_18-37.png)
+
+
+Добавляем в контейнера настройки авторизации
+
+```yml
+      KAFKA_AUTHORIZER_CLASS_NAME: org.apache.kafka.metadata.authorizer.StandardAuthorizer
+      KAFKA_SUPER_USERS: "User:admin"
+      KAFKA_ALLOW_EVERYONE_IF_NO_ACL_FOUND: "true"
+      KAFKA_OPTS: "-Djava.security.auth.login.config=/etc/kafka/kafka_server_jaas.conf"
+      KAFKA_SASL_ENABLED_MECHANISMS: 'PLAIN'
+      KAFKA_SASL_MECHANISM_INTER_BROKER_PROTOCOL: 'PLAIN'
+```
+
+правим параметр  
+`KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT'`
+на
+`KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: 'CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:SASL_PLAINTEXT'`
+
+создаем файл с пользователями  `kafka_server_jaas.conf`
+
+создаем админский конфиг `admin.properties`
+
+```shell
+sasl.jaas.config=org.apache.kafka.common.security.plain.PlainLoginModule required \
+	username="admin" \
+	password="admin";
+security.protocol=SASL_PLAINTEXT
+sasl.mechanism=PLAIN
+```
+
+Запускаем контейнеры и пробуем создать топик test1 без админского конфига
+
+запрос `/usr/local/kafka/bin/kafka-topics.sh --bootstrap-server localhost:19092 --create --replication-factor 1 --partitions 1 --topic test1`
+
+прекращается по таймауту в логах ошибка
+
+`[2024-10-27 10:58:58,020] INFO [SocketServer listenerType=BROKER, nodeId=1] Failed authentication with /172.26.0.1 (channelId=172.26.0.2:19092-172.26.0.1:56244-10) (Unexpected Kafka request of type METADATA during SASL handshake.) (org.apache.kafka.common.network.Selector)
+`
+
+добавляем конфиг `--command-config /home/dmitry/Otus/dz/admin.properties` и запускаем снова
+
+топик создался, ошибок нет
+![2024-10-27_14-02.png](2024-10-27_14-02.png)
