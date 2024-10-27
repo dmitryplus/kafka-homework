@@ -139,3 +139,15 @@ sasl.mechanism=PLAIN
 
 топик создался, ошибок нет
 ![2024-10-27_14-02.png](2024-10-27_14-02.png)
+
+
+Выдаем пользователю Alice право на чтение из топика test1
+
+`/usr/local/kafka/bin/kafka-acls.sh --bootstrap-server localhost:19092 --add --allow-principal User:Alice --operation Read --topic test1 --command-config /home/dmitry/Otus/dz/admin.properties
+`
+
+Выдаем пользователю Bob права на запись в топик test1
+
+`/usr/local/kafka/bin/kafka-acls.sh --bootstrap-server localhost:19092 --add --allow-principal User:Bob --operation Write --topic test1 --command-config /home/dmitry/Otus/dz/admin.properties`
+
+![2024-10-27_14-16.png](2024-10-27_14-16.png)
