@@ -33,4 +33,23 @@ docker exec -it 4da7d3832d08 /usr/bin/kafka-topics --bootstrap-server localhost:
 ![2024-11-17_12-15.png](2024-11-17_12-15.png)
 
 
+Создаем продюсер в отдельном классе MyProducer, в настройках для транзакций добавляем `TRANSACTIONAL_ID_CONFIG`
 
+```java
+        Map<String, Object> producerConfig = Map.of(
+                ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092",
+                ProducerConfig.ACKS_CONFIG, "all",
+                ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
+                ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class,
+                ProducerConfig.TRANSACTIONAL_ID_CONFIG, "transactionId"
+        );
+```
+
+Коммитим и отменяем транзакции методами - `commitTransaction` и `abortTransaction`
+
+Запускаем продюсер
+![2024-11-17_14-31.png](2024-11-17_14-31.png)
+
+
+Проверяем наличие сообщений в топиказ через kafdrop
+![2024-11-17_14-33.png](2024-11-17_14-33.png)
