@@ -7,13 +7,12 @@ import org.apache.kafka.common.errors.ProducerFencedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.Map;
 
 public class MyProducer {
-    public static void main() throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException {
 
         Logger log = LoggerFactory.getLogger(MyProducer.class);
 
