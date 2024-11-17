@@ -53,3 +53,26 @@ docker exec -it 4da7d3832d08 /usr/bin/kafka-topics --bootstrap-server localhost:
 
 Проверяем наличие сообщений в топиказ через kafdrop
 ![2024-11-17_14-33.png](2024-11-17_14-33.png)
+
+
+Создаем слушатель `MyConsumer` 
+
+Собираем настройки
+```java
+        Map<String, Object> consumerConfig = Map.of(
+                ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:29092",
+                ConsumerConfig.GROUP_ID_CONFIG, "some-java-consumer",
+                ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
+                ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
+                ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest",
+                ConsumerConfig.FETCH_MAX_BYTES_CONFIG, 2000
+        );
+```
+
+Подключаем после продюсера.
+
+
+Запускаем и проверяем лог полученных сообщений в консоли
+![2024-11-17_16-19.png](2024-11-17_16-19.png)
+
+Полчуны сообщения с отметкой 'good transaction' со всех запусков продюсера

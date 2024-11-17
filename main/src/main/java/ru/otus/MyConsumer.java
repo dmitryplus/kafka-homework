@@ -18,7 +18,6 @@ public class MyConsumer {
 
     public static void consumerFromTopic() {
 
-
         Logger log = LoggerFactory.getLogger(MyConsumer.class);
 
 
