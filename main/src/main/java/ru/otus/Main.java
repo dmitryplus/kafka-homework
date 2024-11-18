@@ -7,10 +7,7 @@ import org.apache.kafka.streams.KafkaStreams;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.StreamsConfig;
 import org.apache.kafka.streams.errors.StreamsException;
-import org.apache.kafka.streams.kstream.Consumed;
-import org.apache.kafka.streams.kstream.KStream;
-import org.apache.kafka.streams.kstream.Printed;
-import org.apache.kafka.streams.kstream.Produced;
+import org.apache.kafka.streams.kstream.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,15 +21,22 @@ public class Main {
         Logger log = LoggerFactory.getLogger("appl");
 
         Serde<String> stringSerde = Serdes.String();
+
+
         var builder = new StreamsBuilder();
 
-        var upperCasedStream = builder
-                .stream("events", Consumed.with(stringSerde, stringSerde))
-                .mapValues(it -> it.toUpperCase());
+        KStream<String, String> originalStream = builder
+                .stream("events", Consumed.with(stringSerde, stringSerde));
 
 
-        upperCasedStream.to("events_new", Produced.with(stringSerde, stringSerde));
-        upperCasedStream.print(Printed.<String, String>toSysOut().withLabel("From my apps"));
+        KTable<String, Long> newTable = originalStream
+                .groupByKey()
+                .count();
+
+        newTable.toStream().print(Printed.<String, Long>toSysOut().withLabel("MY count"));
+
+
+        originalStream.print(Printed.<String, String>toSysOut().withLabel("From my apps"));
 
 
         Map<String, Object> streamsConfig = Map.of(
