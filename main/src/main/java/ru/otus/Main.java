@@ -11,6 +11,7 @@ import org.apache.kafka.streams.kstream.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
@@ -25,16 +26,14 @@ public class Main {
 
         var builder = new StreamsBuilder();
 
-        KStream<String, String> originalStream = builder
-                .stream("events", Consumed.with(stringSerde, stringSerde));
+        KStream<String, String> originalStream = builder.stream("events", Consumed.with(stringSerde, stringSerde));
 
-
-        KTable<String, Long> newTable = originalStream
+        var newTable = originalStream
                 .groupByKey()
+                .windowedBy(TimeWindows.ofSizeWithNoGrace(Duration.ofMinutes(1)))
                 .count();
 
-        newTable.toStream().print(Printed.<String, Long>toSysOut().withLabel("MY count"));
-
+        newTable.toStream().print(Printed.<Windowed<String>, Long>toSysOut().withLabel("Count for 1 minute:"));
 
         originalStream.print(Printed.<String, String>toSysOut().withLabel("From my apps"));
 
