@@ -60,6 +60,8 @@ public class MyProducer {
                 }
 
 
+                producer2.flush();
+
                 producer2.abortTransaction();
                 log.info("send commit with abort transaction for all topics");
 

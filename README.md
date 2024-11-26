@@ -76,3 +76,15 @@ docker exec -it 4da7d3832d08 /usr/bin/kafka-topics --bootstrap-server localhost:
 ![2024-11-17_16-19.png](2024-11-17_16-19.png)
 
 Полчуны сообщения с отметкой 'good transaction' со всех запусков продюсера
+
+
+
+### Доработка
+
+Добавил в конфиг консьюмера `ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed"`
+
+и проверил через `producer2.flush();` в [MyProducer.java](main/src/main/java/ru/otus/MyProducer.java)
+
+получил только нужные сообщения с отметкой 'good transaction'
+
+![2024-11-26_13-57.png](2024-11-26_13-57.png)

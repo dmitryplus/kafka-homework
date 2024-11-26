@@ -27,7 +27,8 @@ public class MyConsumer {
                 ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
                 ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class,
                 ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest",
-                ConsumerConfig.FETCH_MAX_BYTES_CONFIG, 2000
+                ConsumerConfig.FETCH_MAX_BYTES_CONFIG, 2000,
+                ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed"
         );
 
 
