@@ -1,42 +1,37 @@
 # kafka-homework
 
+Запускаем zookeper, kafka, kafka-connect и postgres 
 
-Отправляю сообщения в кафку консольным продюсером
+проверяем состояние
 
-```sh
-docker exec -it 804c10535da7 /usr/bin/kafka-console-producer --bootstrap-server localhost:29093 --topic test  
-```
+![2024-12-17_11-01.png](2024-12-17_11-01.png)
 
-Принимаю в source вот таким консюмером
 
-```scala
+проверяем плагины коннекторов запросом на `http://localhost:8083/connector-plugins`
 
-  val consumer = Consumer
-    .plainSource(consumerSettings, Subscriptions.topics("test"))
-    .map { msg: ConsumerRecord[String, String] => Integer.parseInt(msg.value()) }
+![2024-12-17_11-03.png](2024-12-17_11-03.png)
 
-```
+проверяем топики connect
 
-дальше поток разделяем на 3
+![2024-12-17_11-05.png](2024-12-17_11-05.png)
 
-```scala
+создаем таблицу и заполняем данными, проверяем
 
-    val multTwo = builder.add(Flow[Int].map(x => x * 2))
-    val multTen = builder.add(Flow[Int].map(x => x * 10))
-    val multThree = builder.add(Flow[Int].map(x => x * 3))
+![2024-12-17_11-14.png](2024-12-17_11-14.png)
 
-```
 
-и собираем общую сумму из 3х потоков в
+создаем коннектор
 
-```scala
+`curl -X POST --data-binary "@clients.json" -H "Content-Type: application/json" http://localhost:8083/connectors | jq`
 
-val zip = builder.add(ZipWith.apply((A1: Int, A2: Int, A3: Int) => {
-  A1 + A2 + A3
-}))
+и проверяем его статус
 
-```
+`curl http://localhost:8083/connectors/clients-connector/status | jq`
 
-в результате 2 преобразуется в 30
+![2024-12-17_11-15.png](2024-12-17_11-15.png)
 
-![2024-12-01_23-30.png](2024-12-01_23-30.png)
+читаем топик - все записи из бд попали в kafka
+
+`docker exec kafka1 kafka-console-consumer --topic postgres.clients --bootstrap-server kafka1:19092,kafka2:19093,kafka3:19094 --from-beginning --property print.offset=true`
+
+![2024-12-17_11-16.png](2024-12-17_11-16.png)
