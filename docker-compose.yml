@@ -100,3 +100,5 @@ services:
       POSTGRES_PASSWORD: password
     volumes:
       - ./data:/data
+      - ./postgres/custom-config.conf:/etc/postgresql/postgresql.conf
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf

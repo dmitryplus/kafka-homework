@@ -20,18 +20,18 @@
 ![2024-12-17_11-14.png](2024-12-17_11-14.png)
 
 
-создаем коннектор
+создаем debezium коннектор
 
-`curl -X POST --data-binary "@clients.json" -H "Content-Type: application/json" http://localhost:8083/connectors | jq`
+`curl -X POST --data-binary "@customers-cdc.json" -H "Content-Type: application/json" http://localhost:8083/connectors | jq`
 
 и проверяем его статус
 
-`curl http://localhost:8083/connectors/clients-connector/status | jq`
+`curl http://localhost:8083/connectors/customers-cdc-connector/status | jq`
 
-![2024-12-17_11-15.png](2024-12-17_11-15.png)
+![2024-12-18_10-09.png](2024-12-18_10-09.png)
 
-читаем топик - все записи из бд попали в kafka
+запускаем слушателя kafka и добавляем записи с таблицу
 
-`docker exec kafka1 kafka-console-consumer --topic postgres.clients --bootstrap-server kafka1:19092,kafka2:19093,kafka3:19094 --from-beginning --property print.offset=true`
+`docker exec kafka1 kafka-console-consumer --topic postgres.cdc.public.customers --bootstrap-server kafka1:19092,kafka2:19093,kafka3:19094 --from-beginning --property print.offset=true`
 
-![2024-12-17_11-16.png](2024-12-17_11-16.png)
+![2024-12-18_11-47.png](2024-12-18_11-47.png)
